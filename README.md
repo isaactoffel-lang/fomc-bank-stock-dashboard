@@ -1,28 +1,47 @@
 # FOMC bank-stock dashboard
 
-An original DATA Club team project exploring the relationship between monetary policy changes and bank-stock behavior.
+An exploratory team project connecting monetary policy changes with bank-stock behavior.
 
-Original team: Isaac Toffel, Alan Chau, Julian Antropow de la Hoz, and Lucas Azout.
+[Read the case study](CASE_STUDY.md) · [Research pipeline](#research-pipeline) · [Publication scope](PUBLICATION.md)
 
-## The research workflow
+## The research question
 
-The original implementation combines an event-study pipeline, feature construction, machine learning models, exploratory analysis, and a Streamlit interface.
+How can policy changes be organized into a study of market behavior, and what can that study reasonably claim?
 
-| Area | Purpose |
+The original DATA Club project combines an event-study pipeline, feature construction, machine learning models, exploratory analysis, and a Streamlit interface. Its engineering is best understood alongside the timing and validation limits of the research.
+
+**Original team:** Isaac Toffel, Alan Chau, Julian Antropow de la Hoz, and Lucas Azout.
+
+## Research pipeline
+
+```mermaid
+flowchart TD
+    policy["Policy rate series"] --> events["Derived change events"]
+    market["Market observations"] --> features["Feature construction"]
+    events --> features
+    features --> models["Exploratory models"]
+    models --> dashboard["Streamlit dashboard"]
+```
+
+The event construction derives policy changes from the rate series. It does not include every policy meeting, so it should not be described as a complete meeting calendar.
+
+## Why timing matters
+
+| Research boundary | Consequence |
 | --- | --- |
-| Event pipeline | Relate policy changes to market observations |
-| Feature construction | Prepare explanatory inputs |
-| Modeling | Explore relationships between inputs and outcomes |
-| Dashboard | Make the research workflow inspectable |
+| Rate changes define events | Meetings without a change are not represented by that event construction. |
+| Windows use trading days | The interpretation needs to reflect the market calendar. |
+| Related observations can cross validation splits | Shuffled evaluation can leak information between groups. |
+| Features can be measured after an announcement | Those features cannot establish a prediction made before the announcement. |
 
-## Methodology limits
+These are limits on the conclusion, rather than details to hide beneath a model result. The project is exploratory research and makes no forecasting, performance, or trading-profit claim here.
 
-The event construction derives policy changes from the rate series and does not include every policy meeting. Trading-day windows need careful interpretation. Shuffled validation can leak information across related observations. Features measured after an announcement cannot establish a prediction made before that announcement.
+## What to inspect
 
-The project is exploratory research. This writeup makes no performance, forecasting, or trading-profit claim.
+The [case study](CASE_STUDY.md) follows the relationship between event construction, feature timing, evaluation, and presentation. It also distinguishes the original implementation from the validation work that would strengthen the study.
 
-## Public scope
+## Attribution and scope
 
-This public repository contains a qualitative project writeup only. Original source, notebooks, chart outputs, development history, and attribution records are retained privately. This repository provides no runnable application, financial results, contact information, or live data connection.
+The original team attribution is preserved. AI assisted with additional checks and documentation; that assistance is separate from authorship of the original team project.
 
-AI assisted with additional checks and documentation. Publishing this writeup does not revalidate the original live application.
+Original source, notebooks, chart outputs, license records, and development history remain private. This public repository contains architecture and research-method discussion, without financial results or a runnable deployment. [Publication policy](PUBLICATION.md)
