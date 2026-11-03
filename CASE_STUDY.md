@@ -1,53 +1,25 @@
-# FOMC dashboard case study
+# The timestamp sets the claim
 
-[Project overview](README.md) · [Publication scope](PUBLICATION.md)
+[Project overview and credits](README.md) · [Timing review source](timing_review.py)
 
-## The timestamp sets the claim
+## Define the event before choosing the model
 
-Research can describe a relationship without establishing that the relationship could have been used in advance. For an event study, the timing of the event, the observation window, and the feature all affect the conclusion.
+The DATA Club project derived events from changes in a policy rate series and aligned them with trading-day observations. That gave the team a concrete event definition. It also restricted the sample to policy rate changes. A meeting that left the rate unchanged could still move the market, so the results describe a narrower population than all policy meetings.
 
-The FOMC bank-stock dashboard is an original DATA Club team project that combines an event-study pipeline, features, exploratory models, and a Streamlit interface. This case study explains that chain and the limitations already identified in its methodology.
+A trading window introduces another decision. A response can be measured only once the observations that define it are available. Market session boundaries and release times therefore matter even when all records use the same calendar date.
 
-## Event construction
+## Separate explanation from prediction
 
-The implementation derives change events from a policy rate series. That is a concrete event definition, but it is narrower than a calendar of all policy meetings.
+| Information | Pre-announcement forecast | Event description |
+| --- | --- | --- |
+| Prior-session trend | Available if observed by the cutoff | Available |
+| Policy surprise | Available after the announcement | Can help characterize the event |
+| Market response | Future outcome at the cutoff | Measures the subsequent move |
 
-The distinction changes the population being studied. A meeting without a rate change is not represented by the same construction. Describing the resulting dataset as every policy meeting would therefore imply coverage the method does not provide.
+A model can appear to anticipate the market if the response leaks into the inputs. Even with valid inputs, a shuffled row split can put bank observations from the same meeting into both training and evaluation. A split by event addresses that dependency. Chronology adds a separate check that the training outcomes were already observable at the first holdout cutoff.
 
-Trading-day windows introduce another interpretation boundary. A market observation window needs to be explained in terms of the trading calendar rather than assumed to match ordinary calendar spacing.
+## What the public example verifies
 
-## Feature availability
+The [timing review](timing_review.py) uses symbolic timestamps to show the forecast boundary and both split checks. It includes a case where the event groups are different but the training label arrives too late. That case would pass a group-only split.
 
-Feature construction turns observations into inputs for analysis. The relevant question is not only what an input measures, but when that measurement would have been available.
-
-A feature measured after an announcement may be useful for describing the observed response. It cannot establish a prediction made before the announcement. The analysis needs to preserve that distinction in both its evaluation and the language used to present it.
-
-| Layer | Question a reviewer should ask |
-| --- | --- |
-| Event definition | What qualifies as an event, and which meetings are omitted? |
-| Observation window | How is the trading calendar handled? |
-| Feature construction | When would this input have become available? |
-| Evaluation | Can related observations appear on both sides of a split? |
-| Presentation | Does the stated conclusion match the information actually available? |
-
-## Evaluation leakage
-
-Shuffled validation can place related observations into different parts of an evaluation. That separation may look independent while still allowing information about the same event or nearby period to cross the boundary.
-
-Grouping related observations and respecting chronology would strengthen the evaluation design. Those are review directions, not claims that a new grouped or chronological evaluation has been implemented during this publication pass.
-
-The same discipline applies to a dashboard. A clear display makes an analysis easier to examine, but presentation cannot repair an evaluation that answers a different question from the one claimed.
-
-## Engineering responsibilities
-
-The project separates event construction, feature preparation, exploratory modeling, and presentation. That structure gives reviewers distinct places to examine a coverage issue, a timing issue, a modeling choice, or a misleading explanation.
-
-The Streamlit interface is the presentation layer of the original research workflow. The public case study documents that responsibility without presenting a live deployment or model output as current evidence.
-
-## Attribution and evidence
-
-The original team is credited in the [project overview](README.md). AI assisted with additional checks and documentation, rather than replacing the original team's attribution.
-
-This editorial review checks the public explanation and publication boundaries. It does not rerun the original research pipeline or establish predictive performance.
-
-Source, notebooks, chart outputs, license records, and development history are retained privately. The public repository makes no trading-profit or investment-performance claim.
+The example runs on invented observations. Establishing predictive performance would require point-in-time market data, a full meeting calendar for claims about all meetings, and an evaluation against a baseline using the same horizon. The public example verifies the rules it implements. [Publication scope](PUBLICATION.md)

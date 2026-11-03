@@ -1,47 +1,22 @@
 # FOMC bank-stock dashboard
 
-An exploratory team project connecting monetary policy changes with bank-stock behavior.
+**Event-study design · Python and Streamlit**
 
-[Read the case study](CASE_STUDY.md) · [Research pipeline](#research-pipeline) · [Publication scope](PUBLICATION.md)
+Our DATA Club team studied how bank stocks behaved around changes in monetary policy. I managed the project and led the study design and evaluation work.
 
-## The research question
+The case study starts with when each model input could have been known. A market move after a policy announcement can explain what happened. A forecast made before the announcement cannot use that move.
 
-How can policy changes be organized into a study of market behavior, and what can that study reasonably claim?
+## Run the review
 
-The original DATA Club project combines an event-study pipeline, feature construction, machine learning models, exploratory analysis, and a Streamlit interface. Its engineering is best understood alongside the timing and validation limits of the research.
-
-**Original team:** Isaac Toffel, Alan Chau, Julian Antropow de la Hoz, and Lucas Azout.
-
-## Research pipeline
-
-```mermaid
-flowchart TD
-    policy["Policy rate series"] --> events["Derived change events"]
-    market["Market observations"] --> features["Feature construction"]
-    events --> features
-    features --> models["Exploratory models"]
-    models --> dashboard["Streamlit dashboard"]
+```sh
+python timing_review.py
 ```
 
-The event construction derives policy changes from the rate series. It does not include every policy meeting, so it should not be described as a complete meeting calendar.
+The [runnable example](timing_review.py) uses invented event timelines. It filters out inputs unavailable by the forecast cutoff, accepts a clean chronological holdout, and rejects shared events, reversed chronology, and training outcomes that overlap the holdout. It needs only Python and its standard library.
 
-## Why timing matters
+[Read the methodology and limits](CASE_STUDY.md) · [Publication scope](PUBLICATION.md)
 
-| Research boundary | Consequence |
-| --- | --- |
-| Rate changes define events | Meetings without a change are not represented by that event construction. |
-| Windows use trading days | The interpretation needs to reflect the market calendar. |
-| Related observations can cross validation splits | Shuffled evaluation can leak information between groups. |
-| Features can be measured after an announcement | Those features cannot establish a prediction made before the announcement. |
+**Original team**  
+Isaac Toffel, Alan Chau, Julian Antropow de la Hoz, and Lucas Azout.
 
-These are limits on the conclusion, rather than details to hide beneath a model result. The project is exploratory research and makes no forecasting, performance, or trading-profit claim here.
-
-## What to inspect
-
-The [case study](CASE_STUDY.md) follows the relationship between event construction, feature timing, evaluation, and presentation. It also distinguishes the original implementation from the validation work that would strengthen the study.
-
-## Attribution and scope
-
-The original team attribution is preserved. AI assisted with additional checks and documentation; that assistance is separate from authorship of the original team project.
-
-Original source, notebooks, chart outputs, license records, and development history remain private. This public repository contains architecture and research-method discussion, without financial results or a runnable deployment. [Publication policy](PUBLICATION.md)
+The timing review was added with AI assistance for this publication. The original study and its model outputs are separate from this example.
